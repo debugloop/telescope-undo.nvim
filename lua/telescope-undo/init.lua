@@ -28,11 +28,11 @@ function _traverse_undotree(entries, level)
     deletions = {}
     on_hunk_callback = function(start_a, count_a, start_b, count_b)
       -- build diff header for this hunk, this is important for delta to show line numbers
-      diff = diff .. "@@ -" .. start_a - vim.o.scrolloff
+      diff = diff .. "@@ -" .. start_a
       if count_a ~= 1 then
         diff = diff .. "," .. count_a
       end
-      diff = diff .. " +" .. start_b + vim.o.scrolloff
+      diff = diff .. " +" .. start_b
       if count_b ~= 1 then
         diff = diff .. "," .. count_b
       end
@@ -40,7 +40,7 @@ function _traverse_undotree(entries, level)
       -- get front context based on scrolloff
       for i = start_a - vim.o.scrolloff, start_a - 1 do
         if buffer_before_lines[i] ~= nil then
-          diff = diff .. "\n" .. buffer_before_lines[i]
+          diff = diff .. "\n " .. buffer_before_lines[i]
         end
       end
       -- get deletions
@@ -58,7 +58,7 @@ function _traverse_undotree(entries, level)
       -- and finally, get some more context in the back
       for i = start_a + count_a, start_a + count_a + vim.o.scrolloff - 1 do
         if buffer_before_lines[i] ~= nil then
-          diff = diff .. "\n" .. buffer_before_lines[i]
+          diff = diff .. "\n " .. buffer_before_lines[i]
         end
       end
       -- terminate all this with a newline, so we're ready for the next hunk
