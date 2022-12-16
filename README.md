@@ -1,5 +1,6 @@
 # telescope-undo.nvim
-Search and browse your buffers' undo trees.
+Search and browse your buffers' undo trees. For those days where committing early and often doesn't
+work out.
 
 ![screenshot](https://user-images.githubusercontent.com/4604331/208148319-edf833d9-1409-44c5-b88a-95e57087fef8.png)
 
