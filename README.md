@@ -1,4 +1,4 @@
-# telescope-undo
+# telescope-undo.nvim
 Search and browse your buffers' undo trees.
 
 ## Usage
@@ -35,7 +35,7 @@ Install with your favorite Neovim package manager.
 ```lua
 require("dep")({
   {
-    "debugloop/telescope-undo",
+    "debugloop/telescope-undo.nvim",
     function()
       require("telescope").load_extension("undo")
       vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
@@ -49,7 +49,7 @@ require("dep")({
 
 ```lua
 use {
-  'debugloop/telescope-undo',
+  'debugloop/telescope-undo.nvim',
   requires = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require("telescope").load_extension("undo")
@@ -60,3 +60,7 @@ use {
 ## Configuration
 
 None, yet :)
+
+## Known Issues
+
+There are TODOs sprinkeled into the code that need some addressing.

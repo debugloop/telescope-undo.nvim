@@ -104,6 +104,7 @@ function build_undolist()
   -- get all diffs
   local ut = vim.fn.undotree()
 
+  -- TODO: maybe use this opportunity to limit the number of root nodes we process overall, to ensure good performance
   local undolist = _traverse_undotree(ut.entries, 0)
 
   -- restore everything after all diffs have been created
