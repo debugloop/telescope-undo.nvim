@@ -30,11 +30,14 @@ Install with your favorite Neovim package manager.
 
 ```lua
 require("dep")({
-  'debugloop/telescope-undo',
-  function()
-    require("telescope").load_extension("undo")
-  end
-  requires = { 'nvim-telescope/telescope.nvim' },
+  {
+    "debugloop/telescope-undo",
+    function()
+      require("telescope").load_extension("undo")
+      vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+    end,
+    requires = { "nvim-telescope/telescope.nvim" },
+  },
 })
 ```
 
@@ -46,7 +49,7 @@ use {
   requires = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require("telescope").load_extension("undo")
-  end
+  end,
 }
 ```
 
