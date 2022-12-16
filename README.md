@@ -63,6 +63,7 @@ use {
 
 None, yet :)
 
-## Known Issues
+## Contributions
 
-There are TODOs sprinkeled into the code that need some addressing.
+Suggestions, issues and patches are very much welcome. There are some TODOs sprinkeled into the code
+that need addressing, but could also use some input and opinions.
