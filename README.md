@@ -9,6 +9,10 @@ by default. Inserted text is fuzzy matched against the additions and deletions i
 in your undo tree. The previewer will show the diff with some context according to your `scrolloff`
 value.
 
+If you have found the undo state you were looking for, you can use `<C-cr>` to revert to that state.
+If you'd rather not change your whole buffer, you can use `<cr>` or `<S-cr>` to yank the additions
+or deletions of this undo state into your default buffer.
+
 Invoke it using:
 
 ```viml
