@@ -116,6 +116,10 @@ function build_undolist()
 end
 
 function undo(opts)
+  if not vim.api.nvim_buf_get_option(0, "modifiable") then
+    print("telescope-undo.nvim: Current buffer is not modifiable.")
+    return
+  end
   opts = opts or {}
   pickers
     .new(opts, {
