@@ -2,7 +2,7 @@
 Search and browse your buffers' undo trees. For those days where committing early and often doesn't
 work out.
 
-![screenshot](https://user-images.githubusercontent.com/4604331/208148319-edf833d9-1409-44c5-b88a-95e57087fef8.png)
+![screenshot](https://user-images.githubusercontent.com/4604331/208297854-df5a104a-2fc1-4411-9f5f-5e40454d8dac.png)
 
 ## Usage
 
