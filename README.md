@@ -62,7 +62,23 @@ use {
 
 ## Configuration
 
-None, yet :)
+The only configuration item right now is use_delta, which controls whether
+[delta](https://github.com/dandavison/delta) is used for fancy diffs in the preview section. If set
+to false, `telescope-undo` will not use `delta` even when available and fall back to a plain diff
+with treesitter highlights.
+
+```lua
+require("telescope").setup({
+  extensions = {
+    undo = {
+      use_delta = true, -- this is the default
+    },
+  },
+})
+```
+
+The full list will always be available in the code providing the defaults
+[here](https://github.com/debugloop/telescope-undo.nvim/blob/main/lua/telescope/_extensions/undo.lua#L5).
 
 ## Contributions
 
