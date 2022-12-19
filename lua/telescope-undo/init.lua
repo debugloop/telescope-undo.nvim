@@ -13,20 +13,20 @@ function _traverse_undotree(entries, level)
   for i = #entries, 1, -1 do
     -- grab the buffer as it is after this iteration's undo state
     vim.cmd("silent undo " .. entries[i].seq)
-    buffer_after_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
-    buffer_after = table.concat(buffer_after_lines, "\n")
+    local buffer_after_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
+    local buffer_after = table.concat(buffer_after_lines, "\n")
 
     -- grab the buffer as it is after this undo state's parent
     vim.cmd("silent undo")
-    buffer_before_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
-    buffer_before = table.concat(buffer_before_lines, "\n")
+    local buffer_before_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
+    local buffer_before = table.concat(buffer_before_lines, "\n")
 
     -- create temporary vars and prepare this iteration
-    diff = ""
-    ordinal = ""
-    additions = {}
-    deletions = {}
-    on_hunk_callback = function(start_a, count_a, start_b, count_b)
+    local diff = ""
+    local ordinal = ""
+    local additions = {}
+    local deletions = {}
+    local on_hunk_callback = function(start_a, count_a, start_b, count_b)
       -- build diff header for this hunk, this is important for delta to show line numbers
       diff = diff .. "@@ -" .. start_a
       if count_a ~= 1 then
@@ -122,72 +122,72 @@ function undo(opts)
   end
   opts = opts or {}
   pickers
-    .new(opts, {
-      prompt_title = "Undo History",
-      finder = finders.new_table({
-        results = build_undolist(),
-        entry_maker = function(undo)
-          -- TODO: show a table instead of a list
-          if #undo.additions + #undo.deletions == 0 then
-            -- skip empty changes, vim has these sometimes...
-            return nil
-          end
-          -- the following prefix should work out to this graph structure:
-          -- state #1
-          -- └─state #2
-          -- state #3
-          -- ├─state #4
-          -- └─state #5
-          -- state #6
-          -- ├─state #7
-          -- ┆ ├─state #8
-          -- ┆ └─state #9
-          -- └─state #10
-          local prefix = ""
-          if undo.alt > 0 then
-            prefix = string.rep("┆ ", undo.alt - 1)
-            if undo.first then
-              prefix = prefix .. "└─"
-            else
-              prefix = prefix .. "├─"
+      .new(opts, {
+        prompt_title = "Undo History",
+        finder = finders.new_table({
+          results = build_undolist(),
+          entry_maker = function(undo)
+            -- TODO: show a table instead of a list
+            if #undo.additions + #undo.deletions == 0 then
+              -- skip empty changes, vim has these sometimes...
+              return nil
             end
-          end
-          return {
-            value = undo,
-            display = prefix
-              .. "state #"
-              .. undo.seq
-              .. ", +"
-              .. #undo.additions
-              .. " -"
-              .. #undo.deletions
-              .. ", "
-              .. timeago(undo.time),
-            ordinal = undo.ordinal,
-          }
+            -- the following prefix should work out to this graph structure:
+            -- state #1
+            -- └─state #2
+            -- state #3
+            -- ├─state #4
+            -- └─state #5
+            -- state #6
+            -- ├─state #7
+            -- ┆ ├─state #8
+            -- ┆ └─state #9
+            -- └─state #10
+            local prefix = ""
+            if undo.alt > 0 then
+              prefix = string.rep("┆ ", undo.alt - 1)
+              if undo.first then
+                prefix = prefix .. "└─"
+              else
+                prefix = prefix .. "├─"
+              end
+            end
+            return {
+              value = undo,
+              display = prefix
+                  .. "state #"
+                  .. undo.seq
+                  .. ", +"
+                  .. #undo.additions
+                  .. " -"
+                  .. #undo.deletions
+                  .. ", "
+                  .. timeago(undo.time),
+              ordinal = undo.ordinal,
+            }
+          end,
+        }),
+        previewer = get_previewer(),
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = function(prompt_bufnr, map)
+          -- TODO: make these configurable
+          map("i", "<c-cr>", function()
+            restore()
+            actions.close(prompt_bufnr)
+          end)
+          map("i", "<s-cr>", function()
+            yank_deletions()
+            actions.close(prompt_bufnr)
+          end)
+          map("i", "<cr>", function()
+            yank_additions()
+            actions.close(prompt_bufnr)
+          end)
+          -- TODO: provide means to filter for time frames
+          return true -- include defaults as well
         end,
-      }),
-      previewer = get_previewer(),
-      sorter = conf.generic_sorter(opts),
-      attach_mappings = function(prompt_bufnr, map)
-        -- TODO: make these configurable
-        map("i", "<c-cr>", function()
-          restore()
-          actions.close(prompt_bufnr)
-        end)
-        map("i", "<s-cr>", function()
-          yank_deletions()
-          actions.close(prompt_bufnr)
-        end)
-        map("i", "<cr>", function()
-          yank_additions()
-          actions.close(prompt_bufnr)
-        end)
-        -- TODO: provide means to filter for time frames
-        return true -- include defaults as well
-      end,
-    })
-    :find()
+      })
+      :find()
 end
 
 return undo
