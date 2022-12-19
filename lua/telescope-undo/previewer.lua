@@ -1,8 +1,7 @@
 local previewers = require("telescope.previewers")
 
-function get_previewer()
-  -- TODO: using an external process should be configurable
-  if vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
+function get_previewer(opts)
+  if opts.use_delta and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, status)
         return {

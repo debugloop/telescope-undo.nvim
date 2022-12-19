@@ -7,7 +7,7 @@ require("telescope-undo.previewer")
 require("telescope-undo.mappings")
 require("telescope-undo.lua-timeago")
 
-function _traverse_undotree(entries, level)
+local function _traverse_undotree(entries, level)
   local undolist = {}
   -- create diffs for each entry in our undotree
   for i = #entries, 1, -1 do
@@ -97,7 +97,7 @@ function _traverse_undotree(entries, level)
   return undolist
 end
 
-function build_undolist()
+local function build_undolist()
   -- save our current cursor
   local cursor = vim.api.nvim_win_get_cursor(0)
 
@@ -115,7 +115,9 @@ function build_undolist()
   return undolist
 end
 
-function undo(opts)
+local M = {}
+
+M.undo = function(opts)
   if not vim.api.nvim_buf_get_option(0, "modifiable") then
     print("telescope-undo.nvim: Current buffer is not modifiable.")
     return
@@ -167,7 +169,7 @@ function undo(opts)
             }
           end,
         }),
-        previewer = get_previewer(),
+        previewer = get_previewer(opts),
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr, map)
           -- TODO: make these configurable
@@ -190,4 +192,4 @@ function undo(opts)
       :find()
 end
 
-return undo
+return M
