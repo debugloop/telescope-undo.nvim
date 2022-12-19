@@ -1,22 +1,24 @@
 # telescope-undo.nvim
-Search and browse your buffers' undo trees. For those days where committing early and often doesn't
-work out.
+Visualize your undo tree and fuzzy-search changes in it. For those days where committing early and
+often doesn't work out.
 
 ![screenshot](https://user-images.githubusercontent.com/4604331/208297854-df5a104a-2fc1-4411-9f5f-5e40454d8dac.png)
 
 ## Usage
 
-After invoking `telescope-undo` you can browse the undo tree in a graphical representation by using
-telescope's `move_selection_next/previous` actions. These are mapped to arrow keys or `<C-n>,<C-p>`
-by default. Inserted text is fuzzy matched against the additions and deletions in each undo state
-in your undo tree. The previewer will show the diff with some context according to your `scrolloff`
-value.
+After invoking `telescope-undo` you can browse the current buffer's undo tree in a text-based tree
+representation by using telescope's `move_selection_next/previous` actions. These are mapped to
+arrow keys or `<C-n>,<C-p>` by default. Inserted text is fuzzy matched against the additions and
+deletions in each undo state in your undo tree and the finder will limit the results accordingly.
+While this obviously breaks the tree visuals, you can freely search in your undo states. The
+previewer will always show the diff of the current selection with some context according to your
+`scrolloff` value.
 
 If you have found the undo state you were looking for, you can use `<C-cr>` to revert to that state.
-If you'd rather not change your whole buffer, you can use `<cr>` or `<S-cr>` to yank the additions
-or deletions of this undo state into your default buffer.
+If you'd rather not change your whole buffer, you can use `<cr>` to yank the additions of this undo
+state into your default register (use `<S-cr>` to yank the deletions).
 
-Invoke it using:
+Invoke using:
 
 ```viml
 :Telescope undo
@@ -24,7 +26,7 @@ Invoke it using:
 :lua require('telescope-undo')()
 ```
 
-I prefer to use this mapping:
+Or use my preferred mapping:
 
 ```lua
 vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
@@ -41,7 +43,7 @@ require("dep")({
     "debugloop/telescope-undo.nvim",
     function()
       require("telescope").load_extension("undo")
-      vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+      -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
     end,
     requires = { "nvim-telescope/telescope.nvim" },
   },
@@ -56,6 +58,7 @@ use {
   requires = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require("telescope").load_extension("undo")
+    -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
   end,
 }
 ```
