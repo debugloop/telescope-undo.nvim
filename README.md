@@ -21,9 +21,11 @@ state into your default register (use `<S-cr>` to yank the deletions).
 Invoke using:
 
 ```viml
+" as soon as you have loaded the extension (see Installation)
 :Telescope undo
-" or
-:lua require('telescope-undo')()
+
+" or at any point after having run packadd on telescope, its dependencies, and telescope-undo
+:lua require('telescope-undo').undo()
 ```
 
 Or use my preferred mapping:
