@@ -27,7 +27,11 @@ local function _traverse_undotree(entries, level)
     local additions = {}
     local deletions = {}
     local on_hunk_callback = function(start_a, count_a, start_b, count_b)
-      -- build diff header for this hunk, this is important for delta to show line numbers
+      -- build diff file header for this hunk, this is important for delta to syntax highlight
+      -- TODO: timestamps are being omitted, but could be included here
+      diff = vim.fn.expand("%")
+      diff = "--- " .. diff .. "\n+++ " .. diff .. "\n"
+      -- build diff location header for this hunk, this is important for delta to show line numbers
       diff = diff .. "@@ -" .. start_a
       if count_a ~= 1 then
         diff = diff .. "," .. count_a
