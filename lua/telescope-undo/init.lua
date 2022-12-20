@@ -1,10 +1,9 @@
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
-local actions = require("telescope.actions")
 local conf = require("telescope.config").values
 
 require("telescope-undo.previewer")
-require("telescope-undo.mappings")
+require("telescope-undo.actions")
 require("telescope-undo.lua-timeago")
 
 local function _traverse_undotree(entries, level)
@@ -176,19 +175,13 @@ M.undo = function(opts)
         previewer = get_previewer(opts),
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr, map)
-          -- TODO: make these configurable
-          map("i", "<c-cr>", function()
-            restore()
-            actions.close(prompt_bufnr)
-          end)
-          map("i", "<s-cr>", function()
-            yank_deletions()
-            actions.close(prompt_bufnr)
-          end)
-          map("i", "<cr>", function()
-            yank_additions()
-            actions.close(prompt_bufnr)
-          end)
+          for _, mode in pairs({ "i", "n" }) do
+            for key, key_func in pairs(opts.mappings[mode] or {}) do
+              map(mode, key, function()
+                key_func(prompt_bufnr)
+              end)
+            end
+          end
           -- TODO: provide means to filter for time frames
           return true -- include defaults as well
         end,

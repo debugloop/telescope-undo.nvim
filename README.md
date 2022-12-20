@@ -85,6 +85,17 @@ require("telescope").setup({
     undo = {
       use_delta = true,     -- this is the default
       side_by_side = false, -- this is the default
+      mappings = {          -- this whole table is the default
+        i = {
+          -- IMPORTANT: Note that telescope-undo must be available when telescope is configured if
+          -- you want to use the following actions. This means installing as a dependency of
+          -- telescope in it's `requirements` and loading this extension from there instead of
+          -- having the separate plugin definition as outlined above. See issue #6.
+          ["<cr>"] = require("telescope-undo.actions").yank_additions,
+          ["<S-cr>"] = require("telescope-undo.actions").yank_deletions,
+          ["<C-cr>"] = require("telescope-undo.actions").restore,
+        },
+      },
     },
   },
 })
