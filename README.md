@@ -65,23 +65,44 @@ use {
 
 ## Configuration
 
-The only configuration item right now is use_delta, which controls whether
-[delta](https://github.com/dandavison/delta) is used for fancy diffs in the preview section. If set
-to false, `telescope-undo` will not use `delta` even when available and fall back to a plain diff
-with treesitter highlights.
+The available configuration values are:
+
+* `use_delta`, which controls whether [delta](https://github.com/dandavison/delta) is used for fancy
+diffs in the preview section. If set to false, `telescope-undo` will not use `delta` even when
+available and fall back to a plain diff with treesitter highlights.
+* `side_by_side`, which tells `delta` to render diffs side-by-side. Thus, requires `delta` to be
+used.
+
+The full list will always be available in the code providing the defaults
+[here](https://github.com/debugloop/telescope-undo.nvim/blob/main/lua/telescope/_extensions/undo.lua#L6).
 
 ```lua
 require("telescope").setup({
   extensions = {
     undo = {
-      use_delta = true, -- this is the default
+      use_delta = true,     -- this is the default
+      side_by_side = false, -- this is the default
     },
   },
 })
 ```
 
-The full list will always be available in the code providing the defaults
-[here](https://github.com/debugloop/telescope-undo.nvim/blob/main/lua/telescope/_extensions/undo.lua#L5).
+My personal recommendation is the following, which maximizes the width of the preview to enable
+side-by-side diffs:
+
+```lua
+require("telescope").setup({
+  extensions = {
+    undo = {
+      side_by_side = true,
+      layout_strategy = "vertical",
+      layout_config = {
+        preview_height = 0.8,
+      },
+    },
+  },
+})
+```
 
 ## Contributions
 

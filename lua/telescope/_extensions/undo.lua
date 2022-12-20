@@ -6,6 +6,7 @@ end
 -- full list of available config items and their defaults
 local config = {
 	use_delta = true,
+	side_by_side = false,
 }
 
 local undo = function()

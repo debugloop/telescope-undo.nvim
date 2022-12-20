@@ -4,10 +4,14 @@ function get_previewer(opts)
   if opts.use_delta and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, status)
+        local append = ""
+        if opts.side_by_side == true then
+          append = append .. " -s"
+        end
         return {
           "bash",
           "-c",
-          "echo '" .. entry.value.diff:gsub("'", [['"'"']]) .. "' | delta",
+          "echo '" .. entry.value.diff:gsub("'", [['"'"']]) .. "' | delta" .. append,
           -- HACK: check out this escape method -----^
         }
       end,
