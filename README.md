@@ -18,22 +18,6 @@ If you have found the undo state you were looking for, you can use `<C-cr>` to r
 If you'd rather not change your whole buffer, you can use `<cr>` to yank the additions of this undo
 state into your default register (use `<S-cr>` to yank the deletions).
 
-Invoke using:
-
-```viml
-" as soon as you have loaded the extension (see Installation)
-:Telescope undo
-
-" or at any point after having run packadd on telescope, its dependencies, and telescope-undo
-:lua require('telescope-undo').undo()
-```
-
-Or use my preferred mapping:
-
-```lua
-vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
-```
-
 ## Installation
 Install with your favorite Neovim package manager.
 
@@ -64,6 +48,23 @@ use {
   end,
 }
 ```
+
+Don't forget to include the call to `load_extension` from above examples. Invoke using:
+
+```viml
+" using lua
+:lua require("telescope").extensions.undo.undo()
+
+" in legacy Vim script
+:Telescope undo
+```
+
+I prefer this mapping:
+
+```lua
+vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+```
+
 
 ## Configuration
 
