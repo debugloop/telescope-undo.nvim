@@ -132,6 +132,8 @@ M.undo = function(opts)
         finder = finders.new_table({
           results = build_undolist(),
           entry_maker = function(undo)
+            local order = require('telescope.config').values.sorting_strategy;
+
             -- TODO: show a table instead of a list
             if #undo.additions + #undo.deletions == 0 then
               -- skip empty changes, vim has these sometimes...
@@ -152,9 +154,10 @@ M.undo = function(opts)
             if undo.alt > 0 then
               prefix = string.rep("┆ ", undo.alt - 1)
               if undo.first then
-                prefix = prefix .. "└─"
+                local corner = order == 'ascending' and '┌' or '└'
+                prefix = prefix .. corner .. "╴"
               else
-                prefix = prefix .. "├─"
+                prefix = prefix .. "├╴"
               end
             end
             return {
