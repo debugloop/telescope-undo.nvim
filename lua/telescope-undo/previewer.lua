@@ -13,7 +13,11 @@ function get_previewer(opts)
       end,
     })
   end
-  if opts.use_delta and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
+  local is_wsl = (function()
+    local output = vim.fn.systemlist("uname -r")
+    return not not string.find(output[1] or "", "WSL")
+  end)()
+  if opts.use_delta and not is_wsl and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, status)
         local append = ""
