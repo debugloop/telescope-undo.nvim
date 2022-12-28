@@ -164,17 +164,20 @@ M.undo = function(opts)
                 prefix = prefix .. "├╴"
               end
             end
+            local diffstat = ""
+            if #undo.additions > 0 then
+              diffstat = "+" .. #undo.additions
+            end
+            if #undo.deletions > 0 then
+              if diffstat ~= "" then
+                diffstat = diffstat .. " "
+              end
+              diffstat = "-" .. #undo.deletions
+            end
             return {
               value = undo,
               display = prefix
-                  .. "state #"
-                  .. undo.seq
-                  .. ", +"
-                  .. #undo.additions
-                  .. " -"
-                  .. #undo.deletions
-                  .. ", "
-                  .. timeago(undo.time),
+                  .. opts.entry_format:gsub("$ID", undo.seq):gsub("$STAT", diffstat):gsub("$TIME", timeago(undo.time)),
               ordinal = undo.ordinal,
             }
           end,
