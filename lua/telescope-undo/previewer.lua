@@ -1,6 +1,18 @@
 local previewers = require("telescope.previewers")
 
 function get_previewer(opts)
+  if opts.use_custom_command ~= nil then
+    return previewers.new_termopen_previewer({
+      get_command = function(entry, status)
+        local difftext = entry.value.diff:gsub("'", [['"'"']])
+        local shlexed = {}
+        for i, part in ipairs(opts.use_custom_command) do
+          shlexed[i] = part:gsub("$DIFF", difftext)
+        end
+        return shlexed
+      end,
+    })
+  end
   if opts.use_delta and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, status)

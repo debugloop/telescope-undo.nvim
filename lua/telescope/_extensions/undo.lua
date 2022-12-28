@@ -6,6 +6,7 @@ end
 -- full list of available config items and their defaults
 local config = {
   use_delta = true,
+  use_custom_command = nil, -- should be in this format: { "bash", "-c", "echo '$DIFF' | delta" }
   side_by_side = false,
   mappings = {
     i = {
