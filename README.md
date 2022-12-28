@@ -73,6 +73,7 @@ available and fall back to a plain diff with treesitter highlights.
 * `side_by_side`, which tells `delta` to render diffs side-by-side. Thus, requires `delta` to be
 used. Be aware that `delta` always uses its own configuration, so it might be that you're getting
 the side-by-side view even if this is set to false
+* `diff_context_lines`, defaults to your scrolloff value.
 
 This is what the defaults look like with some additional explanations:
 
@@ -83,6 +84,7 @@ require("telescope").setup({
       use_delta = true,
       use_custom_command = nil, -- setting this implies `use_delta = false`. Accepted format is: { "bash", "-c", "echo '$DIFF' | delta" }
       side_by_side = false,
+      diff_context_lines = vim.o.scrolloff,
       mappings = {
         i = {
           -- IMPORTANT: Note that telescope-undo must be available when telescope is configured if

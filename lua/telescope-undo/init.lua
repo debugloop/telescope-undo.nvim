@@ -6,7 +6,7 @@ require("telescope-undo.previewer")
 require("telescope-undo.actions")
 require("telescope-undo.lua-timeago")
 
-local function _traverse_undotree(entries, level)
+local function _traverse_undotree(opts, entries, level)
   local undolist = {}
   -- create diffs for each entry in our undotree
   for i = #entries, 1, -1 do
@@ -40,8 +40,12 @@ local function _traverse_undotree(entries, level)
         diff = diff .. "," .. count_b
       end
       diff = diff .. " @@"
-      -- get front context based on scrolloff
-      for i = start_a - vim.o.scrolloff, start_a - 1 do
+      -- get front context based on options
+      local context_lines = 0
+      if opts.diff_context_lines ~= nil then
+        context_lines = opts.diff_context_lines
+      end
+      for i = start_a - context_lines, start_a - 1 do
         if buffer_before_lines[i] ~= nil then
           diff = diff .. "\n " .. buffer_before_lines[i]
         end
@@ -59,7 +63,7 @@ local function _traverse_undotree(entries, level)
         ordinal = ordinal .. buffer_after_lines[i]
       end
       -- and finally, get some more context in the back
-      for i = start_a + count_a, start_a + count_a + vim.o.scrolloff - 1 do
+      for i = start_a + count_a, start_a + count_a + context_lines - 1 do
         if buffer_before_lines[i] ~= nil then
           diff = diff .. "\n " .. buffer_before_lines[i]
         end
@@ -90,7 +94,7 @@ local function _traverse_undotree(entries, level)
 
     -- descend recursively into alternate histories of undo states
     if entries[i].alt ~= nil then
-      alt_undolist = _traverse_undotree(entries[i].alt, level + 1)
+      alt_undolist = _traverse_undotree(opts, entries[i].alt, level + 1)
       -- pretend these results are our results
       for _, elem in pairs(alt_undolist) do
         table.insert(undolist, elem)
@@ -100,7 +104,7 @@ local function _traverse_undotree(entries, level)
   return undolist
 end
 
-local function build_undolist()
+local function build_undolist(opts)
   -- save our current cursor
   local cursor = vim.api.nvim_win_get_cursor(0)
 
@@ -108,7 +112,7 @@ local function build_undolist()
   local ut = vim.fn.undotree()
 
   -- TODO: maybe use this opportunity to limit the number of root nodes we process overall, to ensure good performance
-  local undolist = _traverse_undotree(ut.entries, 0)
+  local undolist = _traverse_undotree(opts, ut.entries, 0)
 
   -- restore everything after all diffs have been created
   -- BUG: `gi` (last insert location) is being killed by our method, we should save that as well
@@ -130,7 +134,7 @@ M.undo = function(opts)
       .new(opts, {
         prompt_title = "Undo History",
         finder = finders.new_table({
-          results = build_undolist(),
+          results = build_undolist(opts),
           entry_maker = function(undo)
             local order = require("telescope.config").values.sorting_strategy
 

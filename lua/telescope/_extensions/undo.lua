@@ -8,6 +8,7 @@ local config = {
   use_delta = true,
   use_custom_command = nil, -- should be in this format: { "bash", "-c", "echo '$DIFF' | delta" }
   side_by_side = false,
+  diff_context_lines = vim.o.scrolloff,
   mappings = {
     i = {
       ["<cr>"] = require("telescope-undo.actions").yank_additions,
