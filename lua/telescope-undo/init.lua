@@ -179,10 +179,8 @@ M.undo = function(opts)
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr, map)
           for _, mode in pairs({ "i", "n" }) do
-            for key, key_func in pairs(opts.mappings[mode] or {}) do
-              map(mode, key, function()
-                key_func(prompt_bufnr)
-              end)
+            for key, get_action in pairs(opts.mappings[mode] or {}) do
+              map(mode, key, get_action(prompt_bufnr))
             end
           end
           -- TODO: provide means to filter for time frames
