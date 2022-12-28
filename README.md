@@ -21,48 +21,45 @@ state into your default register (use `<S-cr>` to yank the deletions).
 ## Installation
 Install with your favorite Neovim package manager.
 
-[dep.nvim](https://github.com/chiyadev/dep):
+Plugin Spec for [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
-require("dep")({
-  {
+{
+  "nvim-telescope/telescope.nvim",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
     "debugloop/telescope-undo.nvim",
-    function()
-      require("telescope").load_extension("undo")
-      -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
-    end,
-    requires = { "nvim-telescope/telescope.nvim" },
   },
-})
-```
-
-[packer.nvim](https://github.com/wbthomason/packer.nvim):
-
-```lua
-use {
-  'debugloop/telescope-undo.nvim',
-  requires = { 'nvim-telescope/telescope.nvim' },
   config = function()
+    require("telescope").setup({
+      extensions = {
+        undo = {
+          -- telescope-undo.nvim config, see below
+        },
+      },
+    })
     require("telescope").load_extension("undo")
     -- optional: vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
   end,
-}
+},
 ```
 
-Don't forget to include the call to `load_extension` from above examples. Invoke using:
+Invoke using:
 
 ```viml
+" Directly by calling it through Telescope's extension interface:
+
 " using lua
 :lua require("telescope").extensions.undo.undo()
-
-" in legacy Vim script
+" using legacy Vim script
 :Telescope undo
-```
 
-I prefer this mapping:
+" Using the optional mapping:
 
-```lua
-vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+" using lua
+:lua vim.keymap.set("n", "<leader>u", "<cmd>Telescope undo<cr>")
+" using legacy Vim script
+:nmap <leader>u <cmd>Telescope undo<cr>
 ```
 
 
@@ -74,23 +71,25 @@ The available configuration values are:
 diffs in the preview section. If set to false, `telescope-undo` will not use `delta` even when
 available and fall back to a plain diff with treesitter highlights.
 * `side_by_side`, which tells `delta` to render diffs side-by-side. Thus, requires `delta` to be
-used.
+used. Be aware that `delta` always uses its own configuration, so it might be that you're getting
+the side-by-side view even if this is set to false
 
-The full list will always be available in the code providing the defaults
-[here](https://github.com/debugloop/telescope-undo.nvim/blob/main/lua/telescope/_extensions/undo.lua#L6).
+This is what the defaults look like with some additional explanations:
 
 ```lua
 require("telescope").setup({
   extensions = {
     undo = {
-      use_delta = true,     -- this is the default
-      side_by_side = false, -- this is the default
-      mappings = {          -- this whole table is the default
+      use_delta = true,
+      use_custom_command = nil, -- setting this implies `use_delta = false`. Accepted format is: { "bash", "-c", "echo '$DIFF' | delta" }
+      side_by_side = false,
+      mappings = {
         i = {
           -- IMPORTANT: Note that telescope-undo must be available when telescope is configured if
-          -- you want to use the following actions. This means installing as a dependency of
-          -- telescope in it's `requirements` and loading this extension from there instead of
-          -- having the separate plugin definition as outlined above. See issue #6.
+          -- you want to replicate these defaults and use the following actions. This means
+          -- installing as a dependency of telescope in it's `requirements` and loading this
+          -- extension from there instead of having the separate plugin definition as outlined
+          -- above.
           ["<cr>"] = require("telescope-undo.actions").yank_additions,
           ["<S-cr>"] = require("telescope-undo.actions").yank_deletions,
           ["<C-cr>"] = require("telescope-undo.actions").restore,
@@ -100,6 +99,9 @@ require("telescope").setup({
   },
 })
 ```
+
+The full list will always be available in the code providing the defaults
+[here](https://github.com/debugloop/telescope-undo.nvim/blob/main/lua/telescope/_extensions/undo.lua#L6).
 
 My personal recommendation is the following, which maximizes the width of the preview to enable
 side-by-side diffs:
