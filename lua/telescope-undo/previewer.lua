@@ -17,20 +17,28 @@ function get_previewer(opts)
     local output = vim.fn.systemlist("uname -r")
     return not not string.find(output[1] or "", "WSL")
   end)()
-  if opts.use_delta and not is_wsl and vim.fn.executable("bash") == 1 and vim.fn.executable("delta") == 1 then
+  if opts.use_delta and not is_wsl and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, status)
         local append = ""
         if opts.side_by_side == true then
           append = append .. " -s"
         end
-        return {
-          "bash",
-          "-c",
-          "echo '" .. entry.value.diff:gsub("'", [['"'"']]) .. "' | delta" .. append,
-          -- HACK: check out this escape method -----^
-        }
-      end,
+        if vim.fn.executable('powershell') then
+          return {
+            "powershell",
+            "-Command",
+            "echo '" .. entry.value.diff:gsub([[']], [['']]) .. "' | delta" .. append,
+          }
+        elseif vim.fn.executable("bash") then
+          return {
+            "bash",
+            "-c",
+            "echo '" .. entry.value.diff:gsub("'", [['"'"']]) .. "' | delta" .. append,
+            -- HACK: check out this escape method -----^
+          }
+        end
+      end
     })
   else
     return previewers.new_buffer_previewer({
