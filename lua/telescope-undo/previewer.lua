@@ -24,13 +24,13 @@ function get_previewer(opts)
         if opts.side_by_side == true then
           append = append .. " -s"
         end
-        if vim.fn.executable('powershell') then
+        if vim.fn.executable('powershell') == 1 then
           return {
             "powershell",
             "-Command",
             "echo '" .. entry.value.diff:gsub([[']], [['']]) .. "' | delta" .. append,
           }
-        elseif vim.fn.executable("bash") then
+        elseif vim.fn.executable("bash") == 1 then
           return {
             "bash",
             "-c",
