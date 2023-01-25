@@ -42,6 +42,7 @@ myactions.yank_deletions = function(prompt_bufnr)
     if entry ~= nil then
       vim.fn.setreg(_get_default_register(), entry.value.deletions, (#entry.value.deletions > 1) and "V" or "v")
       actions.close(prompt_bufnr)
+      return entry.value.deletions
     end
   end
   return yank_deletions
@@ -54,6 +55,7 @@ myactions.yank_additions = function(prompt_bufnr)
     if entry ~= nil then
       vim.fn.setreg(_get_default_register(), entry.value.additions, (#entry.value.additions > 1) and "V" or "v")
       actions.close(prompt_bufnr)
+      return entry.value.additions
     end
   end
   return yank_additions
