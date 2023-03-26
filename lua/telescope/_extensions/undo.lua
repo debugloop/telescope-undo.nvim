@@ -31,8 +31,10 @@ end
 
 return telescope.register_extension({
   setup = function(extension_config, telescope_config)
-    _ = telescope_config -- shut up lsp, I want this named for reference
     config = vim.tbl_extend("force", config, extension_config)
+    if config["side_by_side"] and not config["use_delta"] then
+      error("telescope_undo.nvim: setting side_by_side but not use_delta will have no effect")
+    end
   end,
   exports = {
     undo = undo,
