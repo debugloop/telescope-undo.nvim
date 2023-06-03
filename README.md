@@ -74,6 +74,8 @@ available and fall back to a plain diff with treesitter highlights.
 used. Be aware that `delta` always uses its own configuration, so it might be that you're getting
 the side-by-side view even if this is set to false
 * `diff_context_lines`, defaults to your scrolloff value.
+* `time_format`, defaults to "" for a timeago-style representation. Can be set to a [Lua date format
+  string](https://www.lua.org/pil/22.1.html).
 
 This is what the defaults look like with some additional explanations:
 
@@ -86,6 +88,7 @@ require("telescope").setup({
       side_by_side = false,
       diff_context_lines = vim.o.scrolloff,
       entry_format = "state #$ID, $STAT, $TIME",
+      time_format = "",
       mappings = {
         i = {
           -- IMPORTANT: Note that telescope-undo must be available when telescope is configured if
