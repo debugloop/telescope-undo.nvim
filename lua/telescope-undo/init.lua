@@ -45,27 +45,27 @@ local function _traverse_undotree(opts, entries, level)
       if opts.diff_context_lines ~= nil then
         context_lines = opts.diff_context_lines
       end
-      for i = start_a - context_lines, start_a - 1 do
-        if buffer_before_lines[i] ~= nil then
-          diff = diff .. "\n " .. buffer_before_lines[i]
+      for j = start_a - context_lines, start_a - 1 do
+        if buffer_before_lines[j] ~= nil then
+          diff = diff .. "\n " .. buffer_before_lines[j]
         end
       end
       -- get deletions
-      for i = start_a, start_a + count_a - 1 do
-        diff = diff .. "\n-" .. buffer_before_lines[i]
-        table.insert(deletions, buffer_before_lines[i])
-        ordinal = ordinal .. buffer_before_lines[i]
+      for j = start_a, start_a + count_a - 1 do
+        diff = diff .. "\n-" .. buffer_before_lines[j]
+        table.insert(deletions, buffer_before_lines[j])
+        ordinal = ordinal .. buffer_before_lines[j]
       end
       -- get additions
-      for i = start_b, start_b + count_b - 1 do
-        diff = diff .. "\n+" .. buffer_after_lines[i]
-        table.insert(additions, buffer_after_lines[i])
-        ordinal = ordinal .. buffer_after_lines[i]
+      for j = start_b, start_b + count_b - 1 do
+        diff = diff .. "\n+" .. buffer_after_lines[j]
+        table.insert(additions, buffer_after_lines[j])
+        ordinal = ordinal .. buffer_after_lines[j]
       end
       -- and finally, get some more context in the back
-      for i = start_a + count_a, start_a + count_a + context_lines - 1 do
-        if buffer_before_lines[i] ~= nil then
-          diff = diff .. "\n " .. buffer_before_lines[i]
+      for j = start_a + count_a, start_a + count_a + context_lines - 1 do
+        if buffer_before_lines[j] ~= nil then
+          diff = diff .. "\n " .. buffer_before_lines[j]
         end
       end
       -- terminate all this with a newline, so we're ready for the next hunk
@@ -94,7 +94,7 @@ local function _traverse_undotree(opts, entries, level)
 
     -- descend recursively into alternate histories of undo states
     if entries[i].alt ~= nil then
-      alt_undolist = _traverse_undotree(opts, entries[i].alt, level + 1)
+      local alt_undolist = _traverse_undotree(opts, entries[i].alt, level + 1)
       -- pretend these results are our results
       for _, elem in pairs(alt_undolist) do
         table.insert(undolist, elem)

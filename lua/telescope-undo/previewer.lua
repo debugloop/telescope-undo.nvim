@@ -39,7 +39,7 @@ function get_previewer(opts)
             -- HACK: check out this escape method -----^
           }
         end
-      end
+      end,
     })
   else
     return previewers.new_buffer_previewer({
