@@ -124,6 +124,8 @@ the side-by-side view even if this is set to false.
 variables.
 * `time_format`, defaults to "" for a timeago-style representation. Can be set to a [Lua date format
   string](https://www.lua.org/pil/22.1.html).
+* `saved_only`, defaults to false, but can be used to limit shown undo states to those that have
+been saved to disk.
 
 Further, the undo telescope should accept any of the usual telescope attributes as well as the
 special `theme` key which auto-extends the telescope theme *on top* of any of your explicitly
@@ -141,6 +143,7 @@ opts = {
       diff_context_lines = vim.o.scrolloff,
       entry_format = "state #$ID, $STAT, $TIME",
       time_format = "",
+      saved_only = false,
     },
   },
 },

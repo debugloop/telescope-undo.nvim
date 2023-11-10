@@ -10,6 +10,9 @@ local function _traverse_undotree(opts, entries, level)
   local undolist = {}
   -- create diffs for each entry in our undotree
   for i = #entries, 1, -1 do
+    if opts.saved_only ~= nil and opts.saved_only and entries[i].save == nil then
+      goto continue
+    end
     -- grab the buffer as it is after this iteration's undo state
     vim.cmd("silent undo " .. entries[i].seq)
     local buffer_after_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
@@ -100,6 +103,7 @@ local function _traverse_undotree(opts, entries, level)
         table.insert(undolist, elem)
       end
     end
+    ::continue::
   end
   return undolist
 end

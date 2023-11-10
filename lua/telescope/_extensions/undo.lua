@@ -11,6 +11,7 @@ local defaults = {
   diff_context_lines = vim.o.scrolloff,
   entry_format = "state #$ID, $STAT, $TIME",
   time_format = "",
+  saved_only = false,
   mappings = {
     i = {
       ["<cr>"] = require("telescope-undo.actions").yank_additions,
