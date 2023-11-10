@@ -81,14 +81,14 @@ local function _traverse_undotree(opts, entries, level)
 
     -- use the data we just created to feed into our finder later
     table.insert(undolist, {
-      seq = entries[i].seq,                   -- save state number, used in display and to restore
-      alt = level,                            -- current level, i.e. how deep into alt branches are we, used to graph
-      first = i == #entries,                  -- whether this is the first node in this branch, used to graph
-      time = entries[i].time,                 -- save state time, used in display
-      ordinal = ordinal,                      -- a long string of all additions and deletions, used for search
-      diff = diff,                            -- the proper diff, used for preview
-      additions = additions,                  -- all additions, used to yank a result
-      deletions = deletions,                  -- all deletions, used to yank a result
+      seq = entries[i].seq, -- save state number, used in display and to restore
+      alt = level, -- current level, i.e. how deep into alt branches are we, used to graph
+      first = i == #entries, -- whether this is the first node in this branch, used to graph
+      time = entries[i].time, -- save state time, used in display
+      ordinal = ordinal, -- a long string of all additions and deletions, used for search
+      diff = diff, -- the proper diff, used for preview
+      additions = additions, -- all additions, used to yank a result
+      deletions = deletions, -- all deletions, used to yank a result
       bufnr = vim.api.nvim_get_current_buf(), -- for which buffer this telescope was invoked, used to restore
     })
 
@@ -131,71 +131,71 @@ M.undo = function(opts)
   end
   opts = opts or {}
   pickers
-      .new(opts, {
-        prompt_title = "Undo History",
-        finder = finders.new_table({
-          results = build_undolist(opts),
-          entry_maker = function(undo)
-            local order = require("telescope.config").values.sorting_strategy
+    .new(opts, {
+      prompt_title = "Undo History",
+      finder = finders.new_table({
+        results = build_undolist(opts),
+        entry_maker = function(undo)
+          local order = require("telescope.config").values.sorting_strategy
 
-            -- TODO: show a table instead of a list
-            if #undo.additions + #undo.deletions == 0 then
-              -- skip empty changes, vim has these sometimes...
-              return nil
-            end
-            -- the following prefix should work out to this graph structure:
-            -- state #1
-            -- └─state #2
-            -- state #3
-            -- ├─state #4
-            -- └─state #5
-            -- state #6
-            -- ├─state #7
-            -- ┆ ├─state #8
-            -- ┆ └─state #9
-            -- └─state #10
-            local prefix = ""
-            if undo.alt > 0 then
-              prefix = string.rep("┆ ", undo.alt - 1)
-              if undo.first then
-                local corner = order == "ascending" and "┌" or "└"
-                prefix = prefix .. corner .. "╴"
-              else
-                prefix = prefix .. "├╴"
-              end
-            end
-            local diffstat = ""
-            if #undo.additions > 0 then
-              diffstat = "+" .. #undo.additions
-            end
-            if #undo.deletions > 0 then
-              if diffstat ~= "" then
-                diffstat = diffstat .. " "
-              end
-              diffstat = "-" .. #undo.deletions
-            end
-            local formatted_time = opts.time_format == "" and timeago(undo.time) or os.date(opts.time_format, undo.time)
-            return {
-              value = undo,
-              display = prefix
-                  .. opts.entry_format:gsub("$ID", undo.seq):gsub("$STAT", diffstat):gsub("$TIME", formatted_time),
-              ordinal = undo.ordinal,
-            }
-          end,
-        }),
-        previewer = get_previewer(opts),
-        sorter = conf.generic_sorter(opts),
-        attach_mappings = function(prompt_bufnr, map)
-          for _, mode in pairs({ "i", "n" }) do
-            for key, get_action in pairs(opts.mappings[mode] or {}) do
-              map(mode, key, get_action(prompt_bufnr))
+          -- TODO: show a table instead of a list
+          if #undo.additions + #undo.deletions == 0 then
+            -- skip empty changes, vim has these sometimes...
+            return nil
+          end
+          -- the following prefix should work out to this graph structure:
+          -- state #1
+          -- └─state #2
+          -- state #3
+          -- ├─state #4
+          -- └─state #5
+          -- state #6
+          -- ├─state #7
+          -- ┆ ├─state #8
+          -- ┆ └─state #9
+          -- └─state #10
+          local prefix = ""
+          if undo.alt > 0 then
+            prefix = string.rep("┆ ", undo.alt - 1)
+            if undo.first then
+              local corner = order == "ascending" and "┌" or "└"
+              prefix = prefix .. corner .. "╴"
+            else
+              prefix = prefix .. "├╴"
             end
           end
-          -- TODO: provide means to filter for time frames
-          return true -- include defaults as well
+          local diffstat = ""
+          if #undo.additions > 0 then
+            diffstat = "+" .. #undo.additions
+          end
+          if #undo.deletions > 0 then
+            if diffstat ~= "" then
+              diffstat = diffstat .. " "
+            end
+            diffstat = "-" .. #undo.deletions
+          end
+          local formatted_time = opts.time_format == "" and timeago(undo.time) or os.date(opts.time_format, undo.time)
+          return {
+            value = undo,
+            display = prefix
+              .. opts.entry_format:gsub("$ID", undo.seq):gsub("$STAT", diffstat):gsub("$TIME", formatted_time),
+            ordinal = undo.ordinal,
+          }
         end,
-      })
-      :find()
+      }),
+      previewer = get_previewer(opts),
+      sorter = conf.generic_sorter(opts),
+      attach_mappings = function(prompt_bufnr, map)
+        for _, mode in pairs({ "i", "n" }) do
+          for key, get_action in pairs(opts.mappings[mode] or {}) do
+            map(mode, key, get_action(prompt_bufnr))
+          end
+        end
+        -- TODO: provide means to filter for time frames
+        return true -- include defaults as well
+      end,
+    })
+    :find()
 end
 
 return M
