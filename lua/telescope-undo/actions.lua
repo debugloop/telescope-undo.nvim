@@ -61,4 +61,24 @@ myactions.yank_additions = function(prompt_bufnr)
   return yank_additions
 end
 
+myactions.yank_larger = function(prompt_bufnr)
+  local function yank_larger()
+    -- yanks the additions from the currently selected undo state into the default register
+    local entry = actions_state.get_selected_entry()
+    if entry == nil then
+      return
+    end
+    if #entry.value.additions >= #entry.value.deletions then
+      vim.fn.setreg(_get_default_register(), entry.value.additions, (#entry.value.additions > 1) and "V" or "v")
+      actions.close(prompt_bufnr)
+      return entry.value.additions
+    else
+      vim.fn.setreg(_get_default_register(), entry.value.deletions, (#entry.value.deletions > 1) and "V" or "v")
+      actions.close(prompt_bufnr)
+      return entry.value.deletions
+    end
+  end
+  return yank_larger
+end
+
 return myactions
