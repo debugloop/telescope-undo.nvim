@@ -92,6 +92,10 @@ Invoke using:
 
 " using lua
 :lua require("telescope").extensions.undo.undo()
+
+" using custom options for just this call
+:lua require("telescope").extensions.undo.undo({ side_by_side = true })
+
 " using legacy Vim script
 :Telescope undo
 
