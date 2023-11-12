@@ -34,7 +34,7 @@ M = {
 }
 
 M.exports.undo = function(config)
-  config = vim.tbl_deep_extend("force", M.config, config)
+  config = vim.tbl_deep_extend("force", M.config, config or {})
   if config.theme then
     config = require("telescope.themes")["get_" .. config.theme](config)
   end
