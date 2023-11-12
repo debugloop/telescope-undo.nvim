@@ -12,6 +12,7 @@ local defaults = {
   entry_format = "state #$ID, $STAT, $TIME",
   time_format = "",
   saved_only = false,
+  compare_to_current = false,
   mappings = {
     i = {
       ["<cr>"] = require("telescope-undo.actions").yank_additions,
@@ -37,6 +38,10 @@ M.exports.undo = function(config)
   config = vim.tbl_deep_extend("force", M.config, config or {})
   if config.theme then
     config = require("telescope.themes")["get_" .. config.theme](config)
+  end
+  if config.compare_to_current then
+    config.compare_to_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
+    config.compare_to = table.concat(config.compare_to_lines, "\n")
   end
   require("telescope-undo").undo(config)
 end

@@ -126,24 +126,29 @@ variables.
   string](https://www.lua.org/pil/22.1.html).
 * `saved_only`, defaults to false, but can be used to limit shown undo states to those that have
 been saved to disk.
+* `compare_to_current`, defaults to false, but can be used to diff every single state against the
+current state. This makes the additions and deletions look random and thus yanking becomes unusable,
+but it can be helpful if the intent is to restore to a previous state, as the diffs will contain the
+cumulative changes between any undo state and the current state.
 
 Further, the undo telescope should accept any of the usual telescope attributes as well as the
 special `theme` key which auto-extends the telescope theme *on top* of any of your explicitly
 provided config. Of course, you might also want to remap some of the default keys.
 
-This is what the defaults look like with some additional explanations:
+This is what the defaults look like with some additional explanations on valid values:
 
 ```lua
 opts = {
   extensions = {
     undo = {
       use_delta = true,
-      use_custom_command = nil, -- setting this implies `use_delta = false`. Accepted format is: { "bash", "-c", "echo '$DIFF' | delta" }
+      use_custom_command = nil, -- setting this implies `use_delta = false`. Accepted format is a table such as: { "bash", "-c", "echo '$DIFF' | delta" }
       side_by_side = false,
       diff_context_lines = vim.o.scrolloff,
-      entry_format = "state #$ID, $STAT, $TIME",
-      time_format = "",
+      entry_format = "state #$ID, $STAT, $TIME", -- no other variables are available, use any of these three freely
+      time_format = "", -- any valid Lua date format
       saved_only = false,
+      compare_to_current = false,
     },
   },
 },

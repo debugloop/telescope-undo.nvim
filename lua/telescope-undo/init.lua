@@ -18,10 +18,18 @@ local function _traverse_undotree(opts, entries, level)
     local buffer_after_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
     local buffer_after = table.concat(buffer_after_lines, "\n")
 
-    -- grab the buffer as it is after this undo state's parent
-    vim.cmd("silent undo")
-    local buffer_before_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
-    local buffer_before = table.concat(buffer_before_lines, "\n")
+    local buffer_before_lines
+    local buffer_before
+    if opts.compare_to ~= nil and opts.compare_to_lines ~= nil then
+      -- use the specified compare target
+      buffer_before_lines = opts.compare_to_lines
+      buffer_before = opts.compare_to
+    else
+      -- grab the buffer as it is after this undo state's parent
+      vim.cmd("silent undo")
+      buffer_before_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
+      buffer_before = table.concat(buffer_before_lines, "\n")
+    end
 
     -- create temporary vars and prepare this iteration
     local diff = ""
