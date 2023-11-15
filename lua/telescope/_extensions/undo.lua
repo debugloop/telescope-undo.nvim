@@ -30,7 +30,7 @@ local defaults = {
   },
 }
 
-M = {
+local M = {
   exports = {},
 }
 
