@@ -235,6 +235,22 @@ opts = {
 }
 ```
 
+If you wish to disable one of the default mappings, just set it to `false`.
+
+```lua
+opts = {
+  extensions = {
+    undo = {
+      mappings = {
+        i = {
+          ["<C-y>"] = false,
+        },
+      },
+    },
+  },
+}
+```
+
 ## Contributions
 
 Suggestions, issues and patches are very much welcome. There are some TODOs sprinkeled into the code

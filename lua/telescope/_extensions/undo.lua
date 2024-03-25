@@ -48,6 +48,12 @@ end
 
 M.setup = function(extension_config, telescope_config)
   M.config = vim.tbl_deep_extend("force", defaults, extension_config)
+  -- Remove default keymaps that have been disabled by the user.
+  for _, mode in ipairs({ "i", "n" }) do
+    M.config.mappings[mode] = vim.tbl_map(function(val)
+      return val ~= false and val or nil
+    end, M.config.mappings[mode])
+  end
   if M.config["side_by_side"] and not M.config["use_delta"] then
     error("telescope_undo.nvim: setting side_by_side but not use_delta will have no effect")
   end
