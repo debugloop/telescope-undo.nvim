@@ -31,64 +31,31 @@ local function _traverse_undotree(opts, entries, level)
       buffer_before = table.concat(buffer_before_lines, "\n")
     end
 
-    -- create temporary vars and prepare this iteration
-    local diff = ""
+    -- build diff header so that delta can go ahead and syntax highlight
+    local filename = vim.fn.expand("%")
+    local header = filename .. "\n--- " .. filename .. "\n+++ " .. filename .. "\n"
+
+    -- do the diff using our internal diff function
+    local diff = vim.diff(buffer_before, buffer_after, {
+      algorithm = "patience",
+      ctxlen = opts.diff_context_lines or 0,
+    })
+
+    -- extract data for yanking and searching
     local ordinal = ""
     local additions = {}
     local deletions = {}
-    local on_hunk_callback = function(start_a, count_a, start_b, count_b)
-      -- build diff file header for this hunk, this is important for delta to syntax highlight
-      -- TODO: timestamps are being omitted, but could be included here
-      diff = vim.fn.expand("%")
-      diff = "--- " .. diff .. "\n+++ " .. diff .. "\n"
-      -- build diff location header for this hunk, this is important for delta to show line numbers
-      diff = diff .. "@@ -" .. start_a
-      if count_a ~= 1 then
-        diff = diff .. "," .. count_a
+    for line in (diff .. "\n"):gmatch("(.-)\n") do
+      if line:sub(1, 1) == "+" then
+        local content = line:sub(2, -1)
+        table.insert(additions, content)
+        ordinal = ordinal .. content
+      elseif line:sub(1, 1) == "-" then
+        local content = line:sub(2, -1)
+        table.insert(deletions, content)
+        ordinal = ordinal .. content
       end
-      diff = diff .. " +" .. start_b
-      if count_b ~= 1 then
-        diff = diff .. "," .. count_b
-      end
-      diff = diff .. " @@"
-      -- get front context based on options
-      local context_lines = 0
-      if opts.diff_context_lines ~= nil then
-        context_lines = opts.diff_context_lines
-      end
-      for j = start_a - context_lines, start_a - 1 do
-        if buffer_before_lines[j] ~= nil then
-          diff = diff .. "\n " .. buffer_before_lines[j]
-        end
-      end
-      -- get deletions
-      for j = start_a, start_a + count_a - 1 do
-        diff = diff .. "\n-" .. buffer_before_lines[j]
-        table.insert(deletions, buffer_before_lines[j])
-        ordinal = ordinal .. buffer_before_lines[j]
-      end
-      -- get additions
-      for j = start_b, start_b + count_b - 1 do
-        diff = diff .. "\n+" .. buffer_after_lines[j]
-        table.insert(additions, buffer_after_lines[j])
-        ordinal = ordinal .. buffer_after_lines[j]
-      end
-      -- and finally, get some more context in the back
-      for j = start_a + count_a, start_a + count_a + context_lines - 1 do
-        if buffer_before_lines[j] ~= nil then
-          diff = diff .. "\n " .. buffer_before_lines[j]
-        end
-      end
-      -- terminate all this with a newline, so we're ready for the next hunk
-      diff = diff .. "\n"
     end
-
-    -- do the diff using our internal diff function
-    vim.diff(buffer_before, buffer_after, {
-      result_type = "indices",
-      on_hunk = on_hunk_callback,
-      algorithm = "patience",
-    })
 
     -- use the data we just created to feed into our finder later
     table.insert(undolist, {
@@ -97,7 +64,7 @@ local function _traverse_undotree(opts, entries, level)
       first = i == #entries, -- whether this is the first node in this branch, used to graph
       time = entries[i].time, -- save state time, used in display
       ordinal = ordinal, -- a long string of all additions and deletions, used for search
-      diff = diff, -- the proper diff, used for preview
+      diff = header .. diff, -- the proper diff, used for preview
       additions = additions, -- all additions, used to yank a result
       deletions = deletions, -- all deletions, used to yank a result
       bufnr = vim.api.nvim_get_current_buf(), -- for which buffer this telescope was invoked, used to restore
