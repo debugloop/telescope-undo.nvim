@@ -28,10 +28,7 @@ local function _traverse_undotree(opts, entries, level)
     local header = filename .. "\n--- " .. filename .. "\n+++ " .. filename .. "\n"
 
     -- do the diff using our internal diff function
-    local diff = vim.diff(buffer_before, buffer_after, {
-      algorithm = "patience",
-      ctxlen = opts.diff_context_lines or 0,
-    })
+    local diff = vim.diff(buffer_before, buffer_after, opts.vim_diff_opts)
 
     -- extract data for yanking and searching
     local ordinal = ""
