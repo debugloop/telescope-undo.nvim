@@ -17,7 +17,7 @@ local function round(num)
   return math.floor(num + 0.5)
 end
 
-function timeago(time)
+local function timeago(time)
   local now = os.time()
   local diff_seconds = os.difftime(now, time)
   if diff_seconds < 45 then
@@ -70,3 +70,5 @@ function timeago(time)
   end
   return round(diff_years) .. " " .. language.year.plural
 end
+
+return { timeago = timeago }

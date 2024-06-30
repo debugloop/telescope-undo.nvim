@@ -2,7 +2,7 @@ local actions = require("telescope.actions")
 local actions_state = require("telescope.actions.state")
 
 local function _get_default_register()
-  local clipboardFlags = vim.split(vim.api.nvim_get_option("clipboard"), ",")
+  local clipboardFlags = vim.split(vim.api.nvim_get_option_value("clipboard", {}), ",")
   if vim.tbl_contains(clipboardFlags, "unnamedplus") then
     return "+"
   end

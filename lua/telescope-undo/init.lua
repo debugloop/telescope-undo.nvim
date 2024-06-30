@@ -2,9 +2,9 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
 
-require("telescope-undo.previewer")
 require("telescope-undo.actions")
-require("telescope-undo.lua-timeago")
+local get_previewer = require("telescope-undo.previewer").get_previewer
+local timeago = require("telescope-undo.lua-timeago").timeago
 
 local function _traverse_undotree(opts, entries, level)
   local undolist = {}
@@ -96,7 +96,7 @@ end
 local M = {}
 
 M.undo = function(opts)
-  if not vim.api.nvim_buf_get_option(0, "modifiable") then
+  if not vim.api.nvim_get_option_value("modifiable", { buf = 0 }) then
     print("telescope-undo.nvim: Current buffer is not modifiable.")
     return
   end
