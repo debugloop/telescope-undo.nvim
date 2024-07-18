@@ -1,8 +1,4 @@
 local previewers = require("telescope.previewers")
-local is_wsl = (function()
-  local output = vim.fn.systemlist("uname -r")
-  return not not string.find(output[1] or "", "WSL")
-end)()
 local function get_previewer(opts)
   if opts.use_custom_command ~= nil then
     return previewers.new_termopen_previewer({
@@ -18,7 +14,7 @@ local function get_previewer(opts)
   end
   local has_powershell = vim.fn.executable("powershell") == 1
   local has_bash = vim.fn.executable("bash") == 1
-  if opts.use_delta and not is_wsl and (has_powershell or has_bash) and vim.fn.executable("delta") == 1 then
+  if opts.use_delta and (has_powershell or has_bash) and vim.fn.executable("delta") == 1 then
     return previewers.new_termopen_previewer({
       get_command = function(entry, _)
         local append = ""
