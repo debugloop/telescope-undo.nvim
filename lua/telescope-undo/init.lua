@@ -14,12 +14,35 @@ local function _traverse_undotree(opts, entries, level)
       goto continue
     end
     -- grab the buffer as it is after this iteration's undo state
-    vim.cmd("silent undo " .. entries[i].seq)
+    local success = pcall(function()
+      vim.cmd("silent undo " .. entries[i].seq)
+    end)
+    if not success then
+      vim.notify_once(
+        "Encountered a bad state in nvim's native undolist for buffer "
+          .. vim.api.nvim_buf_get_name(0)
+          .. ", showing partial results.",
+        vim.log.levels.ERROR
+      )
+      return undolist
+    end
+
     local buffer_after_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
     local buffer_after = table.concat(buffer_after_lines, "\n")
 
     -- grab the buffer as it is after this undo state's parent
-    vim.cmd("silent undo")
+    success = pcall(function()
+      vim.cmd("silent undo")
+    end)
+    if not success then
+      vim.notify_once(
+        "Encountered a bad state in nvim's native undolist for buffer "
+          .. vim.api.nvim_buf_get_name(0)
+          .. ", showing partial results.",
+        vim.log.levels.ERROR
+      )
+      return undolist
+    end
     local buffer_before_lines = vim.api.nvim_buf_get_lines(0, 0, -1, false) or {}
     local buffer_before = table.concat(buffer_before_lines, "\n")
 
