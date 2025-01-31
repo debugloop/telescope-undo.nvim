@@ -127,7 +127,7 @@ M.undo = function(opts)
       finder = finders.new_table({
         results = build_undolist(opts),
         entry_maker = function(undo)
-          local order = require("telescope.config").values.sorting_strategy
+          local order = opts.sorting_strategy or conf.sorting_strategy
 
           -- TODO: show a table instead of a list
           if #undo.additions + #undo.deletions == 0 then
